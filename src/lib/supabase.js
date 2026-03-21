@@ -16,18 +16,18 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // MODE 1 — AKTIF SEKARANG (hapus/comment bagian ini saat pindah ke Mode 2)
 // ─────────────────────────────────────────────────────────────────────────────
-export const supabase = null;
+//export const supabase = null;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODE 2 — UNTUK FASE 2 (hapus kode Mode 1 di atas, lalu uncomment ini)
 // ─────────────────────────────────────────────────────────────────────────────
-// import { createClient } from "@supabase/supabase-js";
-//
-// const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-// const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-//
-// if (!supabaseUrl || !supabaseKey) {
-//   console.warn("⚠️ Supabase credentials tidak ditemukan di .env.local");
-// }
-//
-// export const supabase = createClient(supabaseUrl, supabaseKey);
+ import { createClient } from "@supabase/supabase-js";
+
+ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+ if (!supabaseUrl || !supabaseKey) {
+   console.warn("⚠️ Supabase credentials tidak ditemukan di .env.local");
+ }
+
+ export const supabase = createClient(supabaseUrl, supabaseKey);
