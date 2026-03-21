@@ -1,4 +1,3 @@
-import { supabase } from '../../lib/supabase';
 import { useState } from "react";
 import { ADMIN_CREDS } from "../../constants";
 
@@ -9,33 +8,16 @@ export default function AdminLogin({ onLogin }) {
   const [err,      setErr]      = useState("");
   const [shake,    setShake]    = useState(false);
 
-  //const handleLogin = () => {
-  //  if (username === ADMIN_CREDS.user && password === ADMIN_CREDS.pass) {
-  //    onLogin();
-  //  } else {
-  //    setErr("Username atau password salah!");
-  //    setShake(true);
-  //    setTimeout(() => setShake(false), 500);
-  //    setTimeout(() => setErr(""), 3000);
-  //  }
-  //};
-
-// Ganti fungsi handleLogin menjadi:
-const handleLogin = async () => {
-  setErr("");
-  const { error } = await supabase.auth.signInWithPassword({
-    email: username,    // field username sekarang diisi dengan email
-    password: password,
-  });
-  if (error) {
-    setErr('Email atau password salah!');
-    setShake(true);
-    setTimeout(() => setShake(false), 500);
-  } else {
-    onLogin();
-  }
-};
-
+  const handleLogin = () => {
+    if (username === ADMIN_CREDS.user && password === ADMIN_CREDS.pass) {
+      onLogin();
+    } else {
+      setErr("Username atau password salah!");
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      setTimeout(() => setErr(""), 3000);
+    }
+  };
 
   const inp = {
     width: "100%", padding: "12px 14px 12px 42px", borderRadius: 12,
@@ -68,7 +50,7 @@ const handleLogin = async () => {
             <span style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", fontSize: 16, pointerEvents: "none" }}>👤</span>
             <input
               type="text"
-              placeholder="Masukkan email admin / username"
+              placeholder="Masukkan username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}

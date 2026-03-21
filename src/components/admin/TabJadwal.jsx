@@ -3,7 +3,7 @@ import ChildAvatar from "../ChildAvatar";
 import ActivityBadge from "../ActivityBadge";
 
 export default function TabJadwal({
-  schedule, setSchedule, activities,
+  schedule, saveScheduleEntry, deleteScheduleEntry, activities,
   showWeekend, dayDates,
   selDay, setSelDay, selChild, setSelChild,
   editAct, setEditAct, editTime, setEditTime,
@@ -20,23 +20,15 @@ export default function TabJadwal({
 
   const handleAdd = () => {
     if (!editAct || !editTime) { flash("⚠️ Pilih aktivitas dan isi waktu!"); return; }
-    setSchedule((prev) => ({
-      ...prev,
-      [selDay]: {
-        ...prev[selDay],
-        [selChild]: { ...(prev[selDay]?.[selChild] || {}), [editAct]: editTime },
-      },
-    }));
+    // Panggil saveScheduleEntry dari App.jsx — ini yang menyimpan ke Supabase
+    saveScheduleEntry({ day: selDay, child: selChild, activity: editAct, timeRange: editTime });
     flash(`✅ ${editAct} ditambahkan untuk ${selChild} — ${selDay}`);
     setEditAct(""); setEditTime("");
   };
 
   const handleDelete = (act) => {
-    setSchedule((prev) => {
-      const u = { ...(prev[selDay]?.[selChild] || {}) };
-      delete u[act];
-      return { ...prev, [selDay]: { ...prev[selDay], [selChild]: u } };
-    });
+    // Panggil deleteScheduleEntry dari App.jsx — ini yang menghapus dari Supabase
+    deleteScheduleEntry({ day: selDay, child: selChild, activity: act });
     flash(`🗑️ ${act} dihapus`);
   };
 
@@ -49,16 +41,12 @@ export default function TabJadwal({
           {(showWeekend ? ALL_DAYS : WEEKDAYS).map((d) => {
             const iw = WEEKEND.includes(d);
             return (
-              <button
-                key={d}
-                onClick={() => setSelDay(d)}
-                style={{
-                  padding: "5px 9px", borderRadius: 9, border: "none", cursor: "pointer",
-                  fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 11,
-                  background: selDay === d ? (iw ? "#37474F" : "#1a1a2e") : "#F0F0F0",
-                  color: selDay === d ? "#fff" : "#666", transition: "all 0.2s",
-                }}
-              >
+              <button key={d} onClick={() => setSelDay(d)} style={{
+                padding: "5px 9px", borderRadius: 9, border: "none", cursor: "pointer",
+                fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 11,
+                background: selDay === d ? (iw ? "#37474F" : "#1a1a2e") : "#F0F0F0",
+                color: selDay === d ? "#fff" : "#666", transition: "all 0.2s",
+              }}>
                 {d} <span style={{ fontSize: 9, opacity: 0.7 }}>{dayDates[d]}</span>
               </button>
             );
@@ -73,17 +61,13 @@ export default function TabJadwal({
           {CHILDREN.map((ch) => {
             const cc = COLORS[ch];
             return (
-              <button
-                key={ch}
-                onClick={() => { setSelChild(ch); setEditNote(notes[ch] || ""); }}
-                style={{
-                  flex: 1, padding: "8px 4px", borderRadius: 12,
-                  border: `2px solid ${selChild === ch ? cc.accent : "#EEE"}`,
-                  cursor: "pointer", fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 11,
-                  background: selChild === ch ? cc.bg : "#FAFAFA", color: cc.accent,
-                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4, transition: "all 0.2s",
-                }}
-              >
+              <button key={ch} onClick={() => { setSelChild(ch); setEditNote(notes[ch] || ""); }} style={{
+                flex: 1, padding: "8px 4px", borderRadius: 12,
+                border: `2px solid ${selChild === ch ? cc.accent : "#EEE"}`,
+                cursor: "pointer", fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 11,
+                background: selChild === ch ? cc.bg : "#FAFAFA", color: cc.accent,
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 4, transition: "all 0.2s",
+              }}>
                 <ChildAvatar name={ch} size={26} />{ch}
               </button>
             );
@@ -100,15 +84,9 @@ export default function TabJadwal({
           <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, color: "#BBB" }}>Belum ada jadwal</div>
         ) : (
           Object.entries(acts).map(([act, time]) => (
-            <div
-              key={act}
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", borderRadius: 9, background: "#fff", marginBottom: 5, boxShadow: "0 1px 4px #00000009" }}
-            >
+            <div key={act} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", borderRadius: 9, background: "#fff", marginBottom: 5, boxShadow: "0 1px 4px #00000009" }}>
               <ActivityBadge activity={act} time={time} />
-              <button
-                onClick={() => handleDelete(act)}
-                style={{ border: "none", background: "#FFEBEE", color: "#E53935", borderRadius: 7, padding: "3px 9px", cursor: "pointer", fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 11 }}
-              >
+              <button onClick={() => handleDelete(act)} style={{ border: "none", background: "#FFEBEE", color: "#E53935", borderRadius: 7, padding: "3px 9px", cursor: "pointer", fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 11 }}>
                 Hapus
               </button>
             </div>
@@ -119,26 +97,17 @@ export default function TabJadwal({
       {/* Add form */}
       <div style={{ borderRadius: 14, border: "1px solid #EBEBEB", background: "#fff", padding: 14 }}>
         <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 13, color: "#333", marginBottom: 10 }}>➕ Tambah Jadwal</div>
-        <select
-          value={editAct}
-          onChange={(e) => setEditAct(e.target.value)}
-          style={{ ...inp, marginBottom: 8, color: editAct ? "#333" : "#AAA" }}
-        >
+        <select value={editAct} onChange={(e) => setEditAct(e.target.value)} style={{ ...inp, marginBottom: 8, color: editAct ? "#333" : "#AAA" }}>
           <option value="">Pilih Aktivitas...</option>
           {activities.map((a) => <option key={a} value={a}>{a}</option>)}
         </select>
         <input
-          type="text"
-          placeholder="Waktu (contoh: 16.00-17.00)"
-          value={editTime}
-          onChange={(e) => setEditTime(e.target.value)}
+          type="text" placeholder="Waktu (contoh: 16.00-17.00)"
+          value={editTime} onChange={(e) => setEditTime(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           style={{ ...inp, marginBottom: 10 }}
         />
-        <button
-          onClick={handleAdd}
-          style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #1a1a2e, #0f3460)", color: "#fff", fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 14, cursor: "pointer" }}
-        >
+        <button onClick={handleAdd} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #1a1a2e, #0f3460)", color: "#fff", fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>
           Simpan Jadwal
         </button>
       </div>
