@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { CHILDREN, COLORS, initialWeekSchedules, initialNotes, INITIAL_ACTIVITIES } from "./constants";
-import { getWeekRange, getWeekDates } from "./utils/weekHelpers";
+//import { getWeekRange, getWeekDates } from "./utils/weekHelpers";
+import { getWeekRange, getWeekDates, BASE_DATE, getCurrentMonday } from "./utils/weekHelpers"; //added 26 Mar 2026
 import { EMPTY_WEEK } from "./constants";
 import { supabase } from "./lib/supabase";
 
@@ -26,7 +27,9 @@ function rowsToSchedule(rows) {
 
 export default function App() {
   const [weekSchedules, setWeekSchedules] = useState(initialWeekSchedules);
-  const [weekIndex,     setWeekIndex]     = useState(0);
+  //const [weekIndex,     setWeekIndex]     = useState(0);
+  const initialWeekIndex = Math.max(0, Math.round((getCurrentMonday() - BASE_DATE) / (7 * 24 * 60 * 60 * 1000)));//added 22 Mar 2026
+  const [weekIndex, setWeekIndex] = useState(initialWeekIndex); //added 22 Mar 2026
   const [notes,         setNotes]         = useState(initialNotes);
   const [activities,    setActivities]    = useState(INITIAL_ACTIVITIES);
   const [showWeekend,   setShowWeekend]   = useState(false);

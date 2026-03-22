@@ -1,7 +1,19 @@
 // ─── Week & Calendar Helpers ──────────────────────────────────────────────────
 
 // Base Monday: 09 Mar 2026
-export const BASE_DATE = new Date(2026, 2, 9);
+// export const BASE_DATE = new Date(2026, 2, 9); --dicomment out 22 Mar 2026
+
+// Base Monday: selalu dihitung dari minggu saat ini (current date) -- tambahan 22 Mar 2026
+function getCurrentMonday() {
+const today = new Date();
+const day = today.getDay(); // 0=Minggu, 1=Senin, ..., 6=Sabtu
+const diff = day === 0 ? -6 : 1 - day; // Geser ke Senin
+const monday = new Date(today);
+monday.setDate(today.getDate() + diff);
+monday.setHours(0, 0, 0, 0); // Reset jam ke 00:00:00
+return monday;
+}
+export const BASE_DATE = getCurrentMonday();
 
 export function getWeekStart(weekIndex) {
   const d = new Date(BASE_DATE);
