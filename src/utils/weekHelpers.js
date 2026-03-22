@@ -4,7 +4,7 @@
 // export const BASE_DATE = new Date(2026, 2, 9); --dicomment out 22 Mar 2026
 
 // Base Monday: selalu dihitung dari minggu saat ini (current date) -- tambahan 22 Mar 2026
-function getCurrentMonday() {
+export function getCurrentMonday() {
 const today = new Date();
 const day = today.getDay(); // 0=Minggu, 1=Senin, ..., 6=Sabtu
 const diff = day === 0 ? -6 : 1 - day; // Geser ke Senin
