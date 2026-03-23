@@ -28,7 +28,7 @@ function rowsToSchedule(rows) {
 export default function App() {
   const [weekSchedules, setWeekSchedules] = useState(initialWeekSchedules);
   //const [weekIndex,     setWeekIndex]     = useState(0);
-  const initialWeekIndex = Math.max(0, Math.round((getCurrentMonday() - BASE_DATE) / (7 * 24 * 60 * 60 * 1000)));//added 22 Mar 2026
+  const initialWeekIndex = Math.round((getCurrentMonday() - BASE_DATE) / (7 * 24 * 60 * 60 * 1000));//added 22 Mar 2026, change 23 Mar 2026
   const [weekIndex, setWeekIndex] = useState(initialWeekIndex); //added 22 Mar 2026
   const [notes,         setNotes]         = useState(initialNotes);
   const [activities,    setActivities]    = useState(INITIAL_ACTIVITIES);
@@ -218,7 +218,7 @@ export default function App() {
           {/* Week navigation */}
           <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 7 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <button onClick={() => setWeekIndex(i => Math.max(0, i - 1))} disabled={weekIndex === 0}
+              <button onClick={() => setWeekIndex(i => Math.max(0, i - 1))} disabled={false}//edited 23 mar 2026
                 style={{ background: weekIndex === 0 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 7, width: 26, height: 26, cursor: weekIndex === 0 ? "not-allowed" : "pointer", color: weekIndex === 0 ? "rgba(255,255,255,0.3)" : "#fff", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>‹</button>
               <div style={{ display: "inline-flex", alignItems: "center", background: "rgba(255,255,255,0.10)", borderRadius: 9, padding: "4px 10px" }}>
                 <span style={{ fontSize: 10, color: "#ffffffAA", fontWeight: 600 }}>📅 {weekRange.start} — {weekRange.end}</span>
